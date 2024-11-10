@@ -33,7 +33,7 @@ This project is a web application built with Streamlit to visualize and analyze 
 
 ## Requirements
 
-- Python 3.11.9
+- Python 3.11
 - The required packages are listed in the `requirements.txt` file. They include:
   - `streamlit`
   - `pandas`
