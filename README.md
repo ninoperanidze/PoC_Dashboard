@@ -1,15 +1,14 @@
 # Samba Soccer Schools Dashboard
 
-This project is a web application built with Streamlit to visualize and analyze performance metrics for Samba Soccer Schools. The dashboard allows users to filter and view performance data by class and age group, and interact with the charts to see detailed performance metrics.
-
+The PoC Dashboard was developed using Streamlit to provide a dynamic and interactive platform for visualizing and analyzing performance metrics for different surveys.
 
 ## Features
 
-- **Performance by Class**: View and analyze performance metrics for different classes.
-- **Performance by Age Group**: View and analyze performance metrics for different age groups.
-- **Interactive Charts**: Click on the charts to see detailed performance metrics for selected classes or age groups.
-- **Customizable Filters**: Filter data by period, metrics, membership period, and class.
-
+- **Average Score Visualization**: The dashboard prominently displays the average score of specific metrics across all programs, providing a clear overview of overall performance.
+- **Cross-Program Comparison**: Users can view and compare scores across different programs.
+- **Deviation from Average**: It visualizes how far each program's performance deviates from the overall average, highlighting outliers and exceptional performers.
+- **Historical Data Analysis**: The dashboard includes functionalities to compare current results against historical data, allowing users to track progress and trends over time.
+- **Deep Dive Analytics**: Advanced filters and interactive charts enable users to delve deeper into the data, examining specific aspects of program performance in detail.
 
 ## Examples
 
@@ -32,8 +31,6 @@ Here are some practical examples of how to use the dashboard:
 4. Select the membership period and class.
 5. View the performance metrics for different age groups in the column chart.
 6. Click on an age group to see the top 10 performing classes in that age range in the bar chart.
-
-![Tab 1 Example](examples/tab_2.png)
 
 
 ## Installation
@@ -67,12 +64,6 @@ Here are some practical examples of how to use the dashboard:
   - `plotly`
   - `streamlit-plotly-events`
 
-## Usage
-
-- Open the web application in your browser.
-- Use the filters on the sidebar to select the desired period, metrics, membership period, and class.
-- View the performance metrics in the charts.
-- Click on the charts to see detailed performance metrics for selected classes or age groups.
 
 ## File Structure
 
