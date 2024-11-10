@@ -32,6 +32,8 @@ Here are some practical examples of how to use the dashboard:
 5. View the performance metrics for different age groups in the column chart.
 6. Click on an age group to see the top 10 performing classes in that age range in the bar chart.
 
+![Tab 1 Example](examples/tab_2.png)
+
 
 ## Installation
 
