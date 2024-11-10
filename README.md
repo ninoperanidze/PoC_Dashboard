@@ -1,4 +1,4 @@
-# Samba Soccer Schools Dashboard
+# PoC Dashboard
 
 The PoC Dashboard was developed using Streamlit to provide a dynamic and interactive platform for visualizing and analyzing performance metrics for different surveys.
 
