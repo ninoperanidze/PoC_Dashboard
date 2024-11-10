@@ -20,7 +20,7 @@ Here are some practical examples of how to use the dashboard:
 2. Choose a metric from the "Metrics" dropdown.
 3. Select the membership period and age group.
 4. View the performance metrics for different classes in the scatter plot.
-5. Click on a class to see detailed performance metrics in the bar chart.
+5. Click on a class to see detailed performance metrics for the selected class in the bar chart.
 
 ![Tab 1 Example](examples/tab_1.png)
 
@@ -31,7 +31,7 @@ Here are some practical examples of how to use the dashboard:
 3. Choose a metric from the "Metrics" dropdown.
 4. Select the membership period and class.
 5. View the performance metrics for different age groups in the column chart.
-6. Click on an age group to see the top 10 performing classes in the bar chart.
+6. Click on an age group to see the top 10 performing classes in that age range in the bar chart.
 
 ![Tab 1 Example](examples/tab_2.png)
 
