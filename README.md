@@ -13,7 +13,7 @@ This project is a web application built with Streamlit to visualize and analyze 
 
 1. Clone the repository:
    ```sh
-   git clone https://github.com/yourusername/samba-soccer-dashboard.git
+   git clone https://github.com/ninoperanidze/PoC_Dashboard.git
    cd samba-soccer-dashboard
 
 2. Create and activate a virtual environment:
