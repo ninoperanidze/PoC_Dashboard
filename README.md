@@ -14,7 +14,7 @@ This project is a web application built with Streamlit to visualize and analyze 
 1. Clone the repository:
    ```sh
    git clone https://github.com/ninoperanidze/PoC_Dashboard.git
-   cd samba-soccer-dashboard
+   cd PoC_Dashboard
 
 2. Create and activate a virtual environment:
    ```sh
