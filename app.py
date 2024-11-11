@@ -12,10 +12,10 @@ file_path = r'data_cleaned.xlsx'  # Path to the Excel file containing the data
 data = pd.read_excel(file_path)  # Read the Excel file into a pandas DataFrame
 
 # Define column indices
-division_col = 0  # Index of the 'Division' column (previously 'Class')
+division_col = 0  # Index of the 'Division' column 
 period_col = 1  # Index of the 'Period' column
-feature_1_col = 2  # Index of the 'Feature 1' column (previously 'Age')
-feature_2_col = 3  # Index of the 'Feature 2' column (previously 'Membership Period')
+feature_1_col = 2  # Index of the 'Feature 1' column 
+feature_2_col = 3  # Index of the 'Feature 2' column 
 metrics_cols = list(range(4, data.shape[1]))  # Indices of the metrics columns
 
 # Convert period_col to categorical if it is numeric
@@ -200,70 +200,77 @@ with main_content:
         with col1:
             with st.expander("Period"):
                 selected_period = st.multiselect(f"Select {data.columns[period_col]}:", data.iloc[:, period_col].unique(), default=data.iloc[:, period_col].unique(), key="feature1_period")
-
+    
         with col2:
             with st.expander("Metrics"):
                 selected_metric = st.selectbox("Select Metric:", data.columns[metrics_cols], index=len(metrics_cols) - 1, key="feature1_metrics")
-
+    
         with col3:
             with st.expander(f"{data.columns[feature_2_col]}"):
                 selected_feature_2 = st.multiselect(f"Select {data.columns[feature_2_col]}:", data.iloc[:, feature_2_col].unique(), default=data.iloc[:, feature_2_col].unique(), key="feature1_feature_2")
-
+    
         with col4:
             with st.expander(f"{data.columns[feature_1_col]}"):
                 selected_feature_1 = st.multiselect(f"Select {data.columns[feature_1_col]}:", data.iloc[:, feature_1_col].unique(), default=data.iloc[:, feature_1_col].unique(), key="feature1_feature_1")
-
+    
         col_chart, col_bar_chart = st.columns([7, 5])
-        with col_chart:
+
+        with col_chart:      
             # Ensure all filters are properly referenced here
             filtered_data = data[
                 (data.iloc[:, period_col].isin(selected_period)) &
                 (data.iloc[:, feature_2_col].isin(selected_feature_2)) &
                 (data.iloc[:, feature_1_col].isin(selected_feature_1))
             ]
-
+        
             # Calculate the average of the selected metric
             average_metrics = filtered_data.groupby([data.columns[division_col], data.columns[period_col]])[selected_metric].agg(['mean', 'count']).reset_index()
-            average_metrics = average_metrics.sort_values(by='mean', ascending=False)
-
-            # Calculate the overall average score for each period
-            overall_avg = filtered_data.groupby(data.columns[period_col])[selected_metric].mean().reset_index()
-
-            # Create the column chart with Plotly
-            fig = px.bar(average_metrics, x=data.columns[division_col], y='mean',
+            average_metrics = average_metrics.sort_values(by='mean', ascending=True)
+        
+            # Create the horizontal bar chart with Plotly
+            fig = px.bar(average_metrics, x='mean', y=data.columns[division_col],
                          color=data.columns[period_col],
-                         hover_name=data.columns[division_col],
+                         orientation='h',
                          hover_data={'mean': ':.2f', 'count': True},
                          labels={'mean': 'Average score', 'count': 'Number of responses'},
                          color_discrete_sequence=['#0C275C', '#6398DF'],
-                         barmode='group')  # Set barmode to 'group' for a regular column chart
+                         barmode='group')  # Set barmode to 'group' for a regular bar chart
+        
+            # Update layout with fixed height and responsive width
+            fig.update_layout(
+                height=450,  # Fixed height
+                width=700,  # Fixed width to fit the designated area
+            )
 
-            # Add horizontal lines for the overall average score for each period
+            # Update traces to customize hover information
+            fig.update_traces(
+                hovertemplate='Average score: %{x:.2f}<br>Number of responses: %{customdata[0]}',
+                textangle=0,
+                textposition='inside',
+                insidetextanchor='start',
+                hoverlabel=dict(
+                    font_size=12,  # Font size of the hover label
+                    align='left'
+                )
+            )
+            # Add vertical lines for the overall average score for each period
             for period, color in zip(overall_avg[data.columns[period_col]], ['#0C275C', '#6398DF']):
                 avg_score = overall_avg[overall_avg[data.columns[period_col]] == period][selected_metric].values[0]
-                fig.add_hline(y=avg_score, line_color=color, line_width=2,
+                fig.add_vline(x=avg_score, line_color=color, line_width=2,
                               annotation_text=f"Avg: {avg_score:.1f}",  # Text indicating the average
                               annotation_position="top right",  # Positioning it at the top right
                               annotation_font_size=10,  # Setting the font size
                               annotation_font_color=color,  # Making the font color the same as the line color
                               annotation_showarrow=False)  # Not showing any arrow pointing to the line
-
-            # Add a note in the bottom left area of the column chart
-            fig.add_annotation(
-                text="Please click on the division to see the detailed performance",
-                xref="paper", yref="paper",
-                x=0, y=-0.05,
-                showarrow=False,
-                font=dict(size=10, color="grey")
-            )
-
-            # Update the layout of the column chart
+        
+        
+            # Update the layout of the bar chart
             fig.update_layout(
                 title={'text': f"<b>{selected_metric}</b>", 'font': {'size': 12, 'color': 'black'}, 'x': 0, 'xanchor': 'left'},  # Set the title of the chart to the selected metric, make it bold, reduce the size, set the color to black, and align it to the left
-                xaxis_showticklabels=False,  # Ensure x-axis labels are not shown
+                xaxis_showticklabels=True,  # Ensure x-axis labels are shown
                 xaxis=dict(
-                    showticklabels=False, 
-                    showgrid=False,  # Remove vertical gridlines
+                    showticklabels=True, 
+                    showgrid=True,  # Show vertical gridlines
                     zeroline=False
                 ),
                 xaxis_title=None,  # Remove the x-axis title
@@ -272,22 +279,24 @@ with main_content:
                     showticklabels=True,  # Enable y-axis labels
                     showgrid=True,  # Show horizontal gridlines
                     zeroline=False,
-                    range=[0, average_metrics['mean'].max() + 1]  # Set the range of the y-axis
+                    automargin=True,  # Automatically adjust margin to fit y-axis labels
+                    range=[0, average_metrics['mean'].max() + 2]  # Set the range of the y-axis
                 ),
                 legend=dict(
-                    orientation='h',  # Distribute legend items horizontally
-                    x=0.5, y=0.9,  # Position the legend on top of the chart, centered
-                    xanchor='center', yanchor='bottom',
-                    itemwidth=100  # Set a fixed width for each legend item
+                    orientation='h',  # Set the orientation of the legend to horizontal
+                    x=-0.4, y=-0.2,  # Position the legend on top of the chart, centered
+                    xanchor='left', yanchor='bottom',
                 ),
                 legend_title_text='',  # Remove the title from the legend
-                margin=dict(l=15, r=100, t=25, b=5)  # Adjust left, right, top, bottom margins
+                margin=dict(l=150, r=50, t=25, b=5)  # Adjust left, right, top, bottom margins
             )
-
-            # Capture selected points from the column chart using plotly_events
-            selected_points = plotly_events(fig, key="feature1_bar")
-
+        
+        
+            # Capture selected points from the bar chart using plotly_events
+            selected_points = plotly_events(fig, key="feature1_bar_events")
+        
             # Update the bar chart if a point is selected
             if selected_points:
-                selected_division_name = selected_points[0]['x']  # Get the division name from the selected point
+                selected_division_name = selected_points[0]['y']  # Get the division name from the selected point
                 update_bar_chart(selected_division_name)  # Update the bar chart with the selected division
+        
