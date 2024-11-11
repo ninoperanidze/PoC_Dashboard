@@ -12,9 +12,8 @@ The PoC Dashboard was developed using Streamlit to provide a dynamic and interac
 
 ## Examples
 
-Here are some practical examples of how to use the dashboard:
+Here is a practical examples of how to use the dashboard:
 
-### Example 1: Viewing Performance by Class
 1. Select the desired period from the "Period" filter.
 2. Choose a metric from the "Metrics" dropdown.
 3. Select the membership period and age group.
@@ -22,17 +21,6 @@ Here are some practical examples of how to use the dashboard:
 5. Click on a class to see detailed performance metrics for the selected class in the bar chart.
 
 ![Tab 1 Example](examples/tab_1.png)
-
-
-### Example 2: Viewing Performance by Age Group
-1. Navigate to the "Performance by Age Group" tab.
-2. Select the desired period from the "Period" filter.
-3. Choose a metric from the "Metrics" dropdown.
-4. Select the membership period and class.
-5. View the performance metrics for different age groups in the column chart.
-6. Click on an age group to see the top 10 performing classes in that age range in the bar chart.
-
-![Tab 1 Example](examples/tab_2.png)
 
 
 ## Installation
