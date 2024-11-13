@@ -8,7 +8,7 @@ from streamlit_plotly_events import plotly_events  # Import plotly_events for ha
 st.set_page_config(layout="wide")
 
 # Load the dataset
-file_path = r'data_cleaned_3.xlsx'  # Path to the Excel file containing the data
+file_path = r'data_cleaned_4.xlsx'  # Path to the Excel file containing the data
 data = pd.read_excel(file_path)  # Read the Excel file into a pandas DataFrame
 
 # Sidebar for selecting the division column
@@ -142,7 +142,12 @@ with main_content[1]:
             with st.expander(f"{data.columns[feature_1_col]}"):
                 selected_feature_1 = st.multiselect(f"Select {data.columns[feature_1_col]}:", data.iloc[:, feature_1_col].unique(), default=data.iloc[:, feature_1_col].unique(), key="division_feature_1")
 
-        col_chart, col_bar_chart = st.columns([7, 5])
+        # Determine column widths based on the type of metric
+        if selected_metric in data.columns[single_select_cols] or selected_metric in data.columns[multi_select_cols]:
+            col_chart, col_bar_chart = st.columns([11.5, 0.5])
+        else:
+            col_chart, col_bar_chart = st.columns([7, 5])
+
         with col_chart:
             # Ensure all filters are properly referenced here
             filtered_data = data[
@@ -196,61 +201,306 @@ with main_content[1]:
                     margin=dict(l=30, r=5, t=25, b=5)
                 )
             
-            elif selected_metric in data.columns[single_select_cols] or selected_metric in data.columns[multi_select_cols]:
-                # Handle single select and multi select metrics            
-                # Combine division_col and 'Year' into a single column for plotting
-                average_metrics['Programme_Year'] = average_metrics[division_col] + ' (' + average_metrics['Year'].astype(str) + ')'
-
-                # Calculate the percentage of each count relative to the total count for each Programme_Year
-                total_counts = average_metrics.groupby('Programme_Year')['count'].transform('sum')
+            elif selected_metric in data.columns[single_select_cols]:
+                # Calculate the percentage of each count relative to the total count for each Programme and Year
+                total_counts = average_metrics.groupby([division_col, data.columns[period_col]])['count'].transform('sum')
                 average_metrics['percentage'] = average_metrics['count'] / total_counts * 100
 
-                # Determine unique periods and directly assign opacities
-                unique_periods = average_metrics['Year'].unique()
-                period_opacity_map = {unique_periods[0]: 1, unique_periods[1]: 0.5}  # Assigning opacity directly
-                average_metrics['opacity'] = average_metrics['Year'].map(period_opacity_map)
+                # Sort data to ensure consistency in bar placement
+                average_metrics.sort_values(by=[division_col, data.columns[period_col], selected_metric], inplace=True)
 
-                # Create the vertical 100% stacked bar chart with Plotly
-                fig = px.bar(
-                    average_metrics,
-                    x='percentage',
-                    y='Programme_Year',  # Use the combined column as the y-axis
-                    color='Choose your favourite class (Single Select)',  # Use the single select column for color
-                    orientation='h',
-                    labels={'percentage': 'Percentage of responses', 'Programme_Year': 'Programme and Year'},
-                    color_discrete_sequence=px.colors.qualitative.Plotly,
-                    barmode='stack',  # Set barmode to 'stack' for a stacked bar chart
-                    text_auto=True,  # Automatically add text labels to the bars
-                    opacity=average_metrics['opacity']  # Apply variable opacity based on the period
+                # Define a list of colors to be used for the metrics
+                color_list = [
+                    "#1C4A86", "#DD1C1F", "#3ABE72",
+                    "#581845", "#FFC300", "#DAF7A6", 
+                    "#FF5733", "#C70039", "#900C3F",  
+                    "#FF33FF", "#33FF57", "#5733FF", 
+                    "#33FFF5", "#FF3380", "#80FF33"
+                ]
+
+                # Get unique metrics and create a color map
+                unique_metrics = average_metrics[selected_metric].unique()
+                color_map = {metric: color_list[i % len(color_list)] for i, metric in enumerate(unique_metrics)}
+
+                # Assign color or opacity based on the period
+                period_col_name = data.columns[period_col]
+                unique_periods = average_metrics[period_col_name].unique()
+                opacities = {unique_periods[0]: 1}  # Full opacity for the first unique period
+
+                # Check if there are at least two unique periods
+                if len(unique_periods) > 1:
+                    opacities[unique_periods[1]] = 0.5  # 50% opacity for the second unique period
+
+                # Create a new column that combines Programme and Year for grouping
+                average_metrics['Programme_Year'] = average_metrics[division_col] + ' (' + average_metrics[period_col_name].astype(str) + ')'
+                # Sort the y-axis labels alphabetically
+                average_metrics.sort_values(by=division_col, inplace=True, ascending=False)
+
+                # Calculate the overall distribution for comparison
+                overall_avg = average_metrics.groupby([data.columns[period_col], selected_metric]).agg({
+                    'count': 'sum'
+                }).reset_index()
+                overall_total_counts = overall_avg.groupby(data.columns[period_col])['count'].transform('sum')
+                overall_avg['percentage'] = overall_avg['count'] / overall_total_counts * 100
+                overall_avg[division_col] = 'Overall Average'
+                overall_avg['Programme_Year'] = 'Overall Average (' + overall_avg[period_col_name].astype(str) + ')'
+
+                # Prepend the overall average row to the average_metrics DataFrame
+                average_metrics = pd.concat([overall_avg, average_metrics], ignore_index=True)
+
+                # Define the desired bar height and number of visible bars
+                bar_height = 20  # Height of each bar
+                fig_height = 450  # Total height of the visible area
+
+                # Create separate traces for each period
+                traces = []
+                for period in unique_periods:
+                    period_data = average_metrics[average_metrics[period_col_name] == period]
+                    trace = go.Bar(
+                        x=period_data['percentage'],
+                        y=period_data[division_col],
+                        name=f'{period}',
+                        orientation='h',
+                        text=period_data['percentage'].apply(lambda x: f'{x:.1f}%'),  # Add labels on the bars
+                        textposition='inside',  # Position the text inside the bars
+                        marker=dict(color=period_data[selected_metric].map(color_map), opacity=opacities[period]),
+                        width=0.4  # Adjust the bar thickness here
+                    )
+                    traces.append(trace)
+
+                # Create the figure with the traces
+                fig = go.Figure(data=traces)
+
+                # Add annotation at the bottom of the chart
+                fig.add_annotation(
+                    text="Current period is in solid colors, previous period transparent",
+                    xref="paper", yref="paper",
+                    x=0.6, y=-0.05,
+                    showarrow=False,
+                    font=dict(size=12),
+                    xanchor='center', yanchor='top'
                 )
-
+            
+                # Custom legend - annotations and shapes
+                legend_x = 1  # x position for legend boxes outside the plot area
+                legend_y_start = 1  # Starting y position for the first legend item
+                box_width = 0.03  # Width of the legend box
+                box_height = 0.03  # Height of the legend box
+                text_offset_y = 0.015  # Vertical offset for the text to align with the box
+            
+                for i, (metric, color) in enumerate(color_map.items()):
+                    # Calculate y position for each item
+                    current_y = legend_y_start - i * 0.04  # Stack items vertically with a gap
+            
+                    # Adding legend boxes
+                    fig.add_shape(
+                        type="rect",
+                        x0=legend_x,
+                        x1=legend_x + box_width,
+                        y0=current_y,
+                        y1=current_y + box_height,
+                        line=dict(color=color),
+                        fillcolor=color,
+                        xref='paper',  # Reference to the entire figure's width
+                        yref='paper'  # Reference to the entire figure's height
+                    )
+                    # Adding text next to the boxes
+                    fig.add_annotation(
+                        x=legend_x + box_width + 0.01,  # Place text right outside the box
+                        y=current_y + box_height / 2,  # Vertically center text in the box
+                        text=metric,
+                        showarrow=False,
+                        xanchor='left',
+                        yanchor='middle',
+                        xref='paper',  # Keep annotations tied to the paper regardless of graph changes
+                        yref='paper'
+                    )
+            
                 fig.update_layout(
-                    height=450,  # Fixed height
-                    width=700,  # Fixed width to fit the designated area
-                    title={'text': f"<b>Choose your favourite class</b>", 'font': {'size': 12, 'color': 'black'}, 'x': 0, 'xanchor': 'left'},
-                    xaxis_showticklabels=True,  # Ensure x-axis labels are shown
-                    xaxis_title=None,  # Remove the x-axis title
-                    yaxis_title=None,  # Remove the y-axis title
+                    height=fig_height,  # Set the dynamic height based on the number of visible bars
+                    width=700,
+                    showlegend=False,
+                    title={'text': f"<b>{selected_metric}</b>", 'font': {'size': 12, 'color': 'black'}, 'x': 0, 'xanchor': 'left'},
+                    xaxis_showticklabels=False,
+                    xaxis=dict(
+                        showticklabels=True, 
+                        showgrid=False,  # Remove vertical gridlines
+                        zeroline=False,
+                        range=[0, 110],
+                        tickfont=dict(size=14, color='black')  # Increase the size of y-axis labels
+                    ),
+                    xaxis_title=None,
+                    yaxis_title=None,
                     yaxis=dict(
                         showticklabels=True,  # Enable y-axis labels
                         showgrid=True,  # Show horizontal gridlines
                         zeroline=False,
-                        automargin=True  # Automatically adjust margin to fit y-axis labels
+                        automargin=True,  # Automatically adjust margin to fit y-axis labels
+                        categoryorder='array',  # Set the category order to be defined by the array
+                        categoryarray=average_metrics[division_col].unique(),  # Use the sorted division_col values
+                        tickfont=dict(size=14, color='black')  # Increase the size of y-axis labels
                     ),
-                    legend=dict(
-                        orientation='h',  # Set the orientation of the legend to horizontal
-                        x=0.5, y=-0.2,  # Position the legend below the chart, centered
-                        xanchor='center', yanchor='bottom',
-                        itemwidth=100  # Set a fixed width for each legend item
-                    ),
-                    legend_title_text='',  # Remove the title from the legend
-                    margin=dict(l=10, r=50, t=25, b=5)  # Adjust left, right, top, bottom margins
+                    margin=dict(l=30, r=70, t=25, b=15)
                 )
-
-                # Display the chart
-                st.plotly_chart(fig)
-
             
+                # Display the chart within a container with vertical scrolling
+                st.plotly_chart(fig, use_container_width=True)
+
+            elif selected_metric in data.columns[multi_select_cols]:
+                # Split the multi-select column by '|' and explode the DataFrame
+                average_metrics[selected_metric] = average_metrics[selected_metric].str.split('|')
+                average_metrics = average_metrics.explode(selected_metric)
+
+                # Strip any leading or trailing whitespace from the split values
+                average_metrics[selected_metric] = average_metrics[selected_metric].str.strip()
+
+                # Group by division_col, period_col, and selected_metric to calculate the count
+                average_metrics = average_metrics.groupby([division_col, data.columns[period_col], selected_metric]).size().reset_index(name='count')
+
+                # Calculate the percentage of each count relative to the total count for each Programme and Year
+                total_counts = average_metrics.groupby([division_col, data.columns[period_col]])['count'].transform('sum')
+                average_metrics['percentage'] = average_metrics['count'] / total_counts * 100
+
+                # Sort data to ensure consistency in bar placement
+                average_metrics.sort_values(by=[division_col, data.columns[period_col], selected_metric], inplace=True)
+
+                # Define a list of colors to be used for the metrics
+                color_list = [
+                    "#1C4A86", "#DD1C1F", "#3ABE72",
+                    "#581845", "#FFC300", "#DAF7A6", 
+                    "#FF5733", "#C70039", "#900C3F",  
+                    "#FF33FF", "#33FF57", "#5733FF", 
+                    "#33FFF5", "#FF3380", "#80FF33"
+                ]
+
+                # Get unique metrics and create a color map
+                unique_metrics = average_metrics[selected_metric].unique()
+                color_map = {metric: color_list[i % len(color_list)] for i, metric in enumerate(unique_metrics)}
+
+                # Assign color or opacity based on the period
+                period_col_name = data.columns[period_col]
+                unique_periods = average_metrics[period_col_name].unique()
+                opacities = {unique_periods[0]: 1}  # Full opacity for the first unique period
+
+                # Check if there are at least two unique periods
+                if len(unique_periods) > 1:
+                    opacities[unique_periods[1]] = 0.5  # 50% opacity for the second unique period
+
+                # Create a new column that combines Programme and Year for grouping
+                average_metrics['Programme_Year'] = average_metrics[division_col] + ' (' + average_metrics[period_col_name].astype(str) + ')'
+                # Sort the y-axis labels alphabetically
+                average_metrics.sort_values(by=division_col, inplace=True, ascending=False)
+
+                # Calculate the overall distribution for comparison
+                overall_avg = average_metrics.groupby([data.columns[period_col], selected_metric]).agg({
+                    'count': 'sum'
+                }).reset_index()
+                overall_total_counts = overall_avg.groupby(data.columns[period_col])['count'].transform('sum')
+                overall_avg['percentage'] = overall_avg['count'] / overall_total_counts * 100
+                overall_avg[division_col] = 'Overall Average'
+                overall_avg['Programme_Year'] = 'Overall Average (' + overall_avg[period_col_name].astype(str) + ')'
+
+                # Prepend the overall average row to the average_metrics DataFrame
+                average_metrics = pd.concat([overall_avg, average_metrics], ignore_index=True)
+
+                # Define the desired bar height and number of visible bars
+                bar_height = 20  # Height of each bar
+                fig_height = 450  # Total height of the visible area
+
+                # Create separate traces for each period
+                traces = []
+                for period in unique_periods:
+                    period_data = average_metrics[average_metrics[period_col_name] == period]
+                    trace = go.Bar(
+                        x=period_data['percentage'],
+                        y=period_data[division_col],
+                        name=f'{period}',
+                        orientation='h',
+                        text=period_data['percentage'].apply(lambda x: f'{x:.1f}%'),  # Add labels on the bars
+                        textposition='inside',  # Position the text inside the bars
+                        marker=dict(color=period_data[selected_metric].map(color_map), opacity=opacities[period]),
+                        width=0.4  # Adjust the bar thickness here
+                    )
+                    traces.append(trace)
+
+                # Create the figure with the traces
+                fig = go.Figure(data=traces)
+
+                # Add annotation at the bottom of the chart
+                fig.add_annotation(
+                    text="Current period is in solid colors, previous period transparent",
+                    xref="paper", yref="paper",
+                    x=0.6, y=-0.05,
+                    showarrow=False,
+                    font=dict(size=12),
+                    xanchor='center', yanchor='top'
+                )
+            
+                # Custom legend - annotations and shapes
+                legend_x = 1  # x position for legend boxes outside the plot area
+                legend_y_start = 1  # Starting y position for the first legend item
+                box_width = 0.03  # Width of the legend box
+                box_height = 0.03  # Height of the legend box
+                text_offset_y = 0.015  # Vertical offset for the text to align with the box
+            
+                for i, (metric, color) in enumerate(color_map.items()):
+                    # Calculate y position for each item
+                    current_y = legend_y_start - i * 0.04  # Stack items vertically with a gap
+            
+                    # Adding legend boxes
+                    fig.add_shape(
+                        type="rect",
+                        x0=legend_x,
+                        x1=legend_x + box_width,
+                        y0=current_y,
+                        y1=current_y + box_height,
+                        line=dict(color=color),
+                        fillcolor=color,
+                        xref='paper',  # Reference to the entire figure's width
+                        yref='paper'  # Reference to the entire figure's height
+                    )
+                    # Adding text next to the boxes
+                    fig.add_annotation(
+                        x=legend_x + box_width + 0.01,  # Place text right outside the box
+                        y=current_y + box_height / 2,  # Vertically center text in the box
+                        text=metric,
+                        showarrow=False,
+                        xanchor='left',
+                        yanchor='middle',
+                        xref='paper',  # Keep annotations tied to the paper regardless of graph changes
+                        yref='paper'
+                    )
+            
+                fig.update_layout(
+                    height=fig_height,  # Set the dynamic height based on the number of visible bars
+                    width=700,
+                    showlegend=False,
+                    title={'text': f"<b>{selected_metric}</b>", 'font': {'size': 12, 'color': 'black'}, 'x': 0, 'xanchor': 'left'},
+                    xaxis_showticklabels=False,
+                    xaxis=dict(
+                        showticklabels=True, 
+                        showgrid=False,  # Remove vertical gridlines
+                        zeroline=False,
+                        range=[0, 110],
+                        tickfont=dict(size=14, color='black')  # Increase the size of y-axis labels
+                    ),
+                    xaxis_title=None,
+                    yaxis_title=None,
+                    yaxis=dict(
+                        showticklabels=True,  # Enable y-axis labels
+                        showgrid=True,  # Show horizontal gridlines
+                        zeroline=False,
+                        automargin=True,  # Automatically adjust margin to fit y-axis labels
+                        categoryorder='array',  # Set the category order to be defined by the array
+                        categoryarray=average_metrics[division_col].unique(),  # Use the sorted division_col values
+                        tickfont=dict(size=14, color='black')  # Increase the size of y-axis labels
+                    ),
+                    margin=dict(l=30, r=70, t=25, b=15)
+                )
+            
+                # Display the chart within a container with vertical scrolling
+                st.plotly_chart(fig, use_container_width=True)
+
             else:
                 # Handle numeric metrics
                 fig = px.scatter(average_metrics, x=division_col, y='mean',
@@ -322,16 +572,10 @@ with main_content[1]:
                                 # Filter to include only boolean and numeric columns
                                 division_data = division_data[data.columns[boolean_cols + numeric_cols]]
                                 update_bar_chart(selected_division_name)  # Update the bar chart with the selected division
-                            else:
-                                st.write("Selected division name not found in the data.")
-                        else:
-                            st.write("Key 'x' not found in selected points.")
                     except IndexError as e:
-                        st.write("IndexError occurred while accessing selected points:", e)
+                        pass
                     except Exception as e:
-                        st.write("An unexpected error occurred:", e)
-                else:
-                    st.write("No points selected or plotly_events returned an empty list.")
+                        pass
 
     # with tab2:
     #     # Filters with separate expanders
