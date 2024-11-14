@@ -222,14 +222,12 @@ with main_content[1]:
                 unique_metrics = average_metrics[selected_metric].unique()
                 color_map = {metric: color_list[i % len(color_list)] for i, metric in enumerate(unique_metrics)}
 
+                # Slice the color list to match the number of unique metrics
+                color_list = color_list[:len(unique_metrics)]
+
                 # Assign color or opacity based on the period
                 period_col_name = data.columns[period_col]
                 unique_periods = average_metrics[period_col_name].unique()
-                opacities = {unique_periods[0]: 1}  # Full opacity for the first unique period
-
-                # Check if there are at least two unique periods
-                if len(unique_periods) > 1:
-                    opacities[unique_periods[1]] = 0.5  # 50% opacity for the second unique period
 
                 # Create a new column that combines Programme and Year for grouping
                 average_metrics['Programme_Year'] = average_metrics[division_col] + ' (' + average_metrics[period_col_name].astype(str) + ')'
@@ -254,7 +252,7 @@ with main_content[1]:
 
                 # Create separate traces for each period
                 traces = []
-                for period in unique_periods:
+                for i, period in enumerate(unique_periods):
                     period_data = average_metrics[average_metrics[period_col_name] == period]
                     trace = go.Bar(
                         x=period_data['percentage'],
@@ -263,7 +261,13 @@ with main_content[1]:
                         orientation='h',
                         text=period_data['percentage'].apply(lambda x: f'{x:.1f}%'),  # Add labels on the bars
                         textposition='inside',  # Position the text inside the bars
-                        marker=dict(color=period_data[selected_metric].map(color_map), opacity=opacities[period]),
+                        marker=dict(
+                        color=[color_map[val] for val in period_data[selected_metric]],  # Apply colors based on the color_map
+                            pattern=dict(
+                                shape="/" if i == 1 else "",  # Add diagonal stripes for the second unique period
+                                size=2 
+                            )
+                        ),
                         width=0.4  # Adjust the bar thickness here
                     )
                     traces.append(trace)
@@ -377,14 +381,12 @@ with main_content[1]:
                 unique_metrics = average_metrics[selected_metric].unique()
                 color_map = {metric: color_list[i % len(color_list)] for i, metric in enumerate(unique_metrics)}
 
+                # Slice the color list to match the number of unique metrics
+                color_list = color_list[:len(unique_metrics)]
+
                 # Assign color or opacity based on the period
                 period_col_name = data.columns[period_col]
                 unique_periods = average_metrics[period_col_name].unique()
-                opacities = {unique_periods[0]: 1}  # Full opacity for the first unique period
-
-                # Check if there are at least two unique periods
-                if len(unique_periods) > 1:
-                    opacities[unique_periods[1]] = 0.5  # 50% opacity for the second unique period
 
                 # Create a new column that combines Programme and Year for grouping
                 average_metrics['Programme_Year'] = average_metrics[division_col] + ' (' + average_metrics[period_col_name].astype(str) + ')'
@@ -409,7 +411,7 @@ with main_content[1]:
 
                 # Create separate traces for each period
                 traces = []
-                for period in unique_periods:
+                for i, period in enumerate(unique_periods):
                     period_data = average_metrics[average_metrics[period_col_name] == period]
                     trace = go.Bar(
                         x=period_data['percentage'],
@@ -418,7 +420,13 @@ with main_content[1]:
                         orientation='h',
                         text=period_data['percentage'].apply(lambda x: f'{x:.1f}%'),  # Add labels on the bars
                         textposition='inside',  # Position the text inside the bars
-                        marker=dict(color=period_data[selected_metric].map(color_map), opacity=opacities[period]),
+                        marker=dict(
+                        color=[color_map[val] for val in period_data[selected_metric]],  # Apply colors based on the color_map
+                            pattern=dict(
+                                shape="/" if i == 1 else "",  # Add diagonal stripes for the second unique period
+                                size=2 
+                            )
+                        ),
                         width=0.4  # Adjust the bar thickness here
                     )
                     traces.append(trace)
@@ -736,14 +744,12 @@ with main_content[1]:
                 unique_metrics = average_metrics[selected_metric].unique()
                 color_map = {metric: color_list[i % len(color_list)] for i, metric in enumerate(unique_metrics)}
 
+                # Slice the color list to match the number of unique metrics
+                color_list = color_list[:len(unique_metrics)]
+
                 # Assign color or opacity based on the period
                 period_col_name = data.columns[period_col]
                 unique_periods = average_metrics[period_col_name].unique()
-                opacities = {unique_periods[0]: 1}  # Full opacity for the first unique period
-
-                # Check if there are at least two unique periods
-                if len(unique_periods) > 1:
-                    opacities[unique_periods[1]] = 0.5  # 50% opacity for the second unique period
 
                 # Create a new column that combines Programme and Year for grouping
                 average_metrics['Programme_Year'] = average_metrics[division_col] + ' (' + average_metrics[period_col_name].astype(str) + ')'
@@ -768,7 +774,7 @@ with main_content[1]:
 
                 # Create separate traces for each period
                 traces = []
-                for period in unique_periods:
+                for i, period in enumerate(unique_periods):
                     period_data = average_metrics[average_metrics[period_col_name] == period]
                     trace = go.Bar(
                         x=period_data['percentage'],
@@ -777,7 +783,13 @@ with main_content[1]:
                         orientation='h',
                         text=period_data['percentage'].apply(lambda x: f'{x:.1f}%'),  # Add labels on the bars
                         textposition='inside',  # Position the text inside the bars
-                        marker=dict(color=period_data[selected_metric].map(color_map), opacity=opacities[period]),
+                        marker=dict(
+                        color=[color_map[val] for val in period_data[selected_metric]],  # Apply colors based on the color_map
+                            pattern=dict(
+                                shape="/" if i == 1 else "",  # Add diagonal stripes for the second unique period
+                                size=2 
+                            )
+                        ),
                         width=0.4  # Adjust the bar thickness here
                     )
                     traces.append(trace)
@@ -886,25 +898,23 @@ with main_content[1]:
                     "#FF33FF", "#33FF57", "#5733FF", 
                     "#33FFF5", "#FF3380", "#80FF33"
                 ]
-            
+
                 # Get unique metrics and create a color map
                 unique_metrics = average_metrics[selected_metric].unique()
                 color_map = {metric: color_list[i % len(color_list)] for i, metric in enumerate(unique_metrics)}
-            
+
+                # Slice the color list to match the number of unique metrics
+                color_list = color_list[:len(unique_metrics)]
+
                 # Assign color or opacity based on the period
                 period_col_name = data.columns[period_col]
                 unique_periods = average_metrics[period_col_name].unique()
-                opacities = {unique_periods[0]: 1}  # Full opacity for the first unique period
-            
-                # Check if there are at least two unique periods
-                if len(unique_periods) > 1:
-                    opacities[unique_periods[1]] = 0.5  # 50% opacity for the second unique period
-            
+
                 # Create a new column that combines Programme and Year for grouping
                 average_metrics['Programme_Year'] = average_metrics[division_col] + ' (' + average_metrics[period_col_name].astype(str) + ')'
                 # Sort the y-axis labels alphabetically
                 average_metrics.sort_values(by=division_col, inplace=True, ascending=False)
-            
+
                 # Calculate the overall distribution for comparison
                 overall_avg = average_metrics.groupby([data.columns[period_col], selected_metric]).agg({
                     'count': 'sum'
@@ -913,17 +923,17 @@ with main_content[1]:
                 overall_avg['percentage'] = overall_avg['count'] / overall_total_counts * 100
                 overall_avg[division_col] = 'Overall Average'
                 overall_avg['Programme_Year'] = 'Overall Average (' + overall_avg[period_col_name].astype(str) + ')'
-            
+
                 # Prepend the overall average row to the average_metrics DataFrame
                 average_metrics = pd.concat([overall_avg, average_metrics], ignore_index=True)
-            
+
                 # Define the desired bar height and number of visible bars
                 bar_height = 20  # Height of each bar
                 fig_height = 450  # Total height of the visible area
-            
+
                 # Create separate traces for each period
                 traces = []
-                for period in unique_periods:
+                for i, period in enumerate(unique_periods):
                     period_data = average_metrics[average_metrics[period_col_name] == period]
                     trace = go.Bar(
                         x=period_data['percentage'],
@@ -932,7 +942,13 @@ with main_content[1]:
                         orientation='h',
                         text=period_data['percentage'].apply(lambda x: f'{x:.1f}%'),  # Add labels on the bars
                         textposition='inside',  # Position the text inside the bars
-                        marker=dict(color=period_data[selected_metric].map(color_map), opacity=opacities[period]),
+                        marker=dict(
+                        color=[color_map[val] for val in period_data[selected_metric]],  # Apply colors based on the color_map
+                            pattern=dict(
+                                shape="/" if i == 1 else "",  # Add diagonal stripes for the second unique period
+                                size=2 
+                            )
+                        ),
                         width=0.4  # Adjust the bar thickness here
                     )
                     traces.append(trace)
