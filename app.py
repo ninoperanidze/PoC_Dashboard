@@ -243,16 +243,16 @@ with main_content[1]:
                 overall_avg[division_col] = 'Overall Average'
                 overall_avg['Programme_Year'] = 'Overall Average (' + overall_avg[period_col_name].astype(str) + ')'
 
+                # Sort selected_metric column based on the order of unique metrics for each value in division_col
+                average_metrics[selected_metric] = pd.Categorical(average_metrics[selected_metric], categories=unique_metrics, ordered=True)
+                average_metrics.sort_values(by=[division_col, selected_metric], inplace=True)
+
                 # Prepend the overall average row to the average_metrics DataFrame
                 average_metrics = pd.concat([overall_avg, average_metrics], ignore_index=True)
 
                 # Define the desired bar height and number of visible bars
                 bar_height = 20  # Height of each bar
                 fig_height = 450  # Total height of the visible area
-
-                # Sort selected_metric column based on the order of unique metrics for each value in division_col
-                average_metrics[selected_metric] = pd.Categorical(average_metrics[selected_metric], categories=unique_metrics, ordered=True)
-                average_metrics.sort_values(by=[division_col, selected_metric], inplace=True)
 
                 # Create separate traces for each period
                 traces = []
@@ -406,16 +406,16 @@ with main_content[1]:
                 overall_avg[division_col] = 'Overall Average'
                 overall_avg['Programme_Year'] = 'Overall Average (' + overall_avg[period_col_name].astype(str) + ')'
 
+                # Sort selected_metric column based on the order of unique metrics for each value in division_col
+                average_metrics[selected_metric] = pd.Categorical(average_metrics[selected_metric], categories=unique_metrics, ordered=True)
+                average_metrics.sort_values(by=[division_col, selected_metric], inplace=True)
+
                 # Prepend the overall average row to the average_metrics DataFrame
                 average_metrics = pd.concat([overall_avg, average_metrics], ignore_index=True)
 
                 # Define the desired bar height and number of visible bars
                 bar_height = 20  # Height of each bar
                 fig_height = 450  # Total height of the visible area
-
-                # Sort selected_metric column based on the order of unique metrics for each value in division_col
-                average_metrics[selected_metric] = pd.Categorical(average_metrics[selected_metric], categories=unique_metrics, ordered=True)
-                average_metrics.sort_values(by=[division_col, selected_metric], inplace=True)
 
                 # Create separate traces for each period
                 traces = []
@@ -773,16 +773,16 @@ with main_content[1]:
                 overall_avg[division_col] = 'Overall Average'
                 overall_avg['Programme_Year'] = 'Overall Average (' + overall_avg[period_col_name].astype(str) + ')'
 
+                # Sort selected_metric column based on the order of unique metrics for each value in division_col
+                average_metrics[selected_metric] = pd.Categorical(average_metrics[selected_metric], categories=unique_metrics, ordered=True)
+                average_metrics.sort_values(by=[division_col, selected_metric], inplace=True)
+
                 # Prepend the overall average row to the average_metrics DataFrame
                 average_metrics = pd.concat([overall_avg, average_metrics], ignore_index=True)
 
                 # Define the desired bar height and number of visible bars
                 bar_height = 20  # Height of each bar
                 fig_height = 450  # Total height of the visible area
-
-                # Sort selected_metric column based on the order of unique metrics for each value in division_col
-                average_metrics[selected_metric] = pd.Categorical(average_metrics[selected_metric], categories=unique_metrics, ordered=True)
-                average_metrics.sort_values(by=[division_col, selected_metric], inplace=True)
 
                 # Create separate traces for each period
                 traces = []
@@ -936,16 +936,16 @@ with main_content[1]:
                 overall_avg[division_col] = 'Overall Average'
                 overall_avg['Programme_Year'] = 'Overall Average (' + overall_avg[period_col_name].astype(str) + ')'
 
+                # Sort selected_metric column based on the order of unique metrics for each value in division_col
+                average_metrics[selected_metric] = pd.Categorical(average_metrics[selected_metric], categories=unique_metrics, ordered=True)
+                average_metrics.sort_values(by=[division_col, selected_metric], inplace=True)
+
                 # Prepend the overall average row to the average_metrics DataFrame
                 average_metrics = pd.concat([overall_avg, average_metrics], ignore_index=True)
 
                 # Define the desired bar height and number of visible bars
                 bar_height = 20  # Height of each bar
                 fig_height = 450  # Total height of the visible area
-
-                # Sort selected_metric column based on the order of unique metrics for each value in division_col
-                average_metrics[selected_metric] = pd.Categorical(average_metrics[selected_metric], categories=unique_metrics, ordered=True)
-                average_metrics.sort_values(by=[division_col, selected_metric], inplace=True)
 
                 # Create separate traces for each period
                 traces = []
