@@ -250,6 +250,10 @@ with main_content[1]:
                 bar_height = 20  # Height of each bar
                 fig_height = 450  # Total height of the visible area
 
+                # Sort selected_metric column based on the order of unique metrics for each value in division_col
+                average_metrics[selected_metric] = pd.Categorical(average_metrics[selected_metric], categories=unique_metrics, ordered=True)
+                average_metrics.sort_values(by=[division_col, selected_metric], inplace=True)
+
                 # Create separate traces for each period
                 traces = []
                 for i, period in enumerate(unique_periods):
@@ -408,6 +412,10 @@ with main_content[1]:
                 # Define the desired bar height and number of visible bars
                 bar_height = 20  # Height of each bar
                 fig_height = 450  # Total height of the visible area
+
+                # Sort selected_metric column based on the order of unique metrics for each value in division_col
+                average_metrics[selected_metric] = pd.Categorical(average_metrics[selected_metric], categories=unique_metrics, ordered=True)
+                average_metrics.sort_values(by=[division_col, selected_metric], inplace=True)
 
                 # Create separate traces for each period
                 traces = []
@@ -772,6 +780,10 @@ with main_content[1]:
                 bar_height = 20  # Height of each bar
                 fig_height = 450  # Total height of the visible area
 
+                # Sort selected_metric column based on the order of unique metrics for each value in division_col
+                average_metrics[selected_metric] = pd.Categorical(average_metrics[selected_metric], categories=unique_metrics, ordered=True)
+                average_metrics.sort_values(by=[division_col, selected_metric], inplace=True)
+
                 # Create separate traces for each period
                 traces = []
                 for i, period in enumerate(unique_periods):
@@ -930,6 +942,10 @@ with main_content[1]:
                 # Define the desired bar height and number of visible bars
                 bar_height = 20  # Height of each bar
                 fig_height = 450  # Total height of the visible area
+
+                # Sort selected_metric column based on the order of unique metrics for each value in division_col
+                average_metrics[selected_metric] = pd.Categorical(average_metrics[selected_metric], categories=unique_metrics, ordered=True)
+                average_metrics.sort_values(by=[division_col, selected_metric], inplace=True)
 
                 # Create separate traces for each period
                 traces = []
