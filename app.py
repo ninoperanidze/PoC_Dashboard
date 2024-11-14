@@ -352,7 +352,7 @@ with main_content[1]:
                 )
             
                 # Display the chart within a container with vertical scrolling
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, use_container_width=True, key='single_select_chart_1')
 
             elif selected_metric in data.columns[multi_select_cols]:
                 # Split the multi-select column by '|' and explode the DataFrame
@@ -515,7 +515,7 @@ with main_content[1]:
                 )
             
                 # Display the chart within a container with vertical scrolling
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, use_container_width=True, key='multi_select_chart_1')
 
             else:
                 # Handle numeric metrics
@@ -882,7 +882,7 @@ with main_content[1]:
                 )
             
                 # Display the chart within a container with vertical scrolling
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, use_container_width=True, key='single_select_chart_2')
 
             elif selected_metric in data.columns[multi_select_cols]:
                 # Split the multi-select column by '|' and explode the DataFrame
@@ -1045,7 +1045,7 @@ with main_content[1]:
                 )
             
                 # Display the chart within a container with vertical scrolling
-                st.plotly_chart(fig, use_container_width=True, key="multi_select_chart")
+                st.plotly_chart(fig, use_container_width=True, key="multi_select_chart_2")
             
             else:
                 fig = px.bar(average_metrics, x='mean', y=division_col,
