@@ -22,6 +22,7 @@ Here is a practical examples of how to use the dashboard:
 
 ![Tab 1 Example](examples/tab_1.png)
 
+![Tab 1 Example_Single_select](examples/tab_1_single_select.png)
 
 ## Installation
 
