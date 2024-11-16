@@ -4,21 +4,26 @@ The PoC Dashboard was developed using Streamlit to provide a dynamic and interac
 
 ## Features
 
-- **Average Score Visualization**: The dashboard prominently displays the average score of specific metrics across all programs, providing a clear overview of overall performance.
-- **Cross-Program Comparison**: Users can view and compare scores across different programs.
-- **Deviation from Average**: It visualizes how far each program's performance deviates from the overall average, highlighting outliers and exceptional performers.
+- **Dynamic Metric Selection**: Users can choose specific metrics to analyze from a sidebar, allowing for personalized data exploration based on selected performance indicators.
+- **Average Score Visualization**: The dashboard prominently displays the average score of specific metrics across all divisions, providing a clear overview of overall performance.
+- **Cross-division Comparison**: Users can view and compare scores across different divisions.
+- **Deviation from Average**: It visualizes how performance deviates from the overall average, highlighting outliers and exceptional performers.
 - **Historical Data Analysis**: The dashboard includes functionalities to compare current results against historical data, allowing users to track progress and trends over time.
-- **Deep Dive Analytics**: Advanced filters and interactive charts enable users to delve deeper into the data, examining specific aspects of program performance in detail.
+- **Deep Dive Analytics**: Advanced filters and interactive charts enable users to delve deeper into the data, examining specific aspects of performance in detail.
+- **Versatile Question Types**: The app accepts surveys with various types of questions, including:
+  - **Numeric and Yes/No Questions**: Displayed as scatter plots to indicate average metrics, facilitating quick assessments of program standings.
+  - **Single and Multi-Select Questions**: Visualized using stacked bar charts that show the distribution of responses, providing a detailed breakdown of participant preferences and opinions.
 
 ## Examples
 
 Here is a practical examples of how to use the dashboard:
 
-1. Select the desired period from the "Period" filter.
-2. Choose a metric from the "Metrics" dropdown.
-3. Select the membership period and age group.
-4. View the performance metrics for different classes in the scatter plot.
-5. Click on a class to see detailed performance metrics for the selected class in the bar chart.
+1. Select the field you want to analyze from a sidebar.
+2. Select the desired period from the "Period" filter.
+3. Choose a metric/question from the "Metrics" dropdown.
+4. Select the other filters.
+5. View the performance metrics in the scatter plot or the bar chart (depending on the type of metric.
+6. Click on dots to see detailed performance metrics in the bar chart.
 
 ![Tab 1 Example](examples/tab_1.png)
 
