@@ -64,7 +64,8 @@ Here is a practical examples of how to use the dashboard:
 ## File Structure
 
 - `app.py`: The main application file containing the Streamlit code and chart configurations.
-- `data_cleaned.xlsx`: The dataset containing the performance metrics for Samba Soccer Schools.
+- `data_cleaned.xlsx`: The dataset containing the only numeric fields for analysis.
+- `data_cleaned_2.xlsx`: The dataset containing all typed of data: numric, yes/no, single select and multi select questions.
 - `requirements.txt`: The file listing the required packages for the project.
 - `.streamlit/config.toml`: The configuration file for Streamlit settings.
 
