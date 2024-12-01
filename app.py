@@ -8,7 +8,7 @@ from streamlit_plotly_events import plotly_events  # Import plotly_events for ha
 st.set_page_config(layout="wide")
 
 # Load the dataset
-file_path = r'data_cleaned_2.xlsx'  # Path to the Excel file containing the data
+file_path = r'data_cleaned_dummy.xlsx'  # Path to the Excel file containing the data
 data = pd.read_excel(file_path)  # Read the Excel file into a pandas DataFrame
 
 # Sidebar for selecting the division column
