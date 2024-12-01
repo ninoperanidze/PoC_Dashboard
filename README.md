@@ -1,6 +1,6 @@
 # PoC Dashboard
 
-The PoC Dashboard was developed using Streamlit to provide a dynamic and interactive platform for visualizing and analyzing performance metrics for different surveys.
+The PoC Dashboard was developed using Streamlit to provide a dynamic and interactive platform for visualizing and analyzing performance metrics for different surveys. The goal was to create a template dashboard that effectively visualizes survey data and can be easily applied for multiple industries. The dashboard focuses on displaying initially high level data, and giving the user the option to intuitively segment their data, making complex data easily understandable.
 
 ## Features
 
@@ -66,8 +66,7 @@ Here is a practical examples of how to use the dashboard:
 ## File Structure
 
 - `app.py`: The main application file containing the Streamlit code and chart configurations.
-- `data_cleaned.xlsx`: The dataset containing the only numeric fields for analysis.
-- `data_cleaned_2.xlsx`: The dataset containing all typed of data: numric, yes/no, single select and multi select questions.
+- `data_cleaned_dummy.xlsx`: The dataset containing all typed of data: numric, yes/no, single select and multi select questions.
 - `requirements.txt`: The file listing the required packages for the project.
 - `.streamlit/config.toml`: The configuration file for Streamlit settings.
 
