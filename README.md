@@ -22,7 +22,7 @@ Here is a practical examples of how to use the dashboard:
 2. Select the desired period from the "Period" filter.
 3. Choose a metric/question from the "Metrics" dropdown.
 4. Select the other filters.
-5. View the performance metrics in the scatter plot or the bar chart (depending on the type of metric.
+5. View the performance metrics in the scatter plot or the bar chart (depending on the type of metric).
 6. Click on dots to see detailed performance metrics in the bar chart.
 
 ![Tab 1 Example](examples/tab_1.png)
