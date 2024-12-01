@@ -25,7 +25,9 @@ Here is a practical examples of how to use the dashboard:
 5. View the performance metrics in the scatter plot or the bar chart (depending on the type of metric).
 6. Click on dots to see detailed performance metrics in the bar chart.
 
-![Tab 1 Example](examples/tab_1.png)
+![Tab 1 Example](examples/tab_1_1.png)
+
+![Tab 1 Example](examples/tab_1_2.png)
 
 ![Tab 1 Example_Single_select](examples/tab_1_single_select.png)
 
